@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "341616675567",
+    "project_id": "visit-rwanda16",
+    "storage_bucket": "visit-rwanda16.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341616675567:android:25714f809ccbe366cea91a",
+        "android_client_info": {
+          "package_name": "com.example.visit_rwanda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLQ1ZAY1Z3n3rsiVuS3gugSIswAfLGH-Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
