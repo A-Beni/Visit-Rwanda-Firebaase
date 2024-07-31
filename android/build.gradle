@@ -1,3 +1,14 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.2'  // Use the appropriate version for your project
+        classpath 'com.google.gms:google-services:4.3.15' // This is where the classpath should be
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -8,12 +19,9 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(':app')
 }
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
-classpath 'com.google.gms:google-services:4.3.15'
