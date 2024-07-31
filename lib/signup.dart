@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:visit_rwanda/auth_service.dart'; 
-import 'home_screen.dart'; 
+import 'package:visit_rwanda/auth_service.dart';
+import 'package:visit_rwanda/login.dart';
+import 'home_screen.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _SignupPageState createState() => _SignupPageState();
 }
 
@@ -16,7 +16,8 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   bool _rememberMe = false;
 
@@ -54,7 +55,8 @@ class _SignupPageState extends State<SignupPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 10.0),
               ),
             ),
             const SizedBox(height: 10),
@@ -70,7 +72,8 @@ class _SignupPageState extends State<SignupPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 10.0),
               ),
               keyboardType: TextInputType.emailAddress,
             ),
@@ -87,7 +90,8 @@ class _SignupPageState extends State<SignupPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 10.0),
               ),
               obscureText: true,
             ),
@@ -104,7 +108,8 @@ class _SignupPageState extends State<SignupPage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 10.0, horizontal: 10.0),
               ),
               obscureText: true,
             ),
@@ -139,16 +144,18 @@ class _SignupPageState extends State<SignupPage> {
                     return;
                   }
 
-                  User? user = await _auth.signInWithEmailAndPassword(email, password);
+                  // Use the register method instead of sign in
+                  User? user =
+                      await _auth.registerWithEmailAndPassword(email, password);
                   if (user != null) {
+                    // Navigate to HomeScreen if registration is successful
                     Navigator.push(
-                      // ignore: use_build_context_synchronously
                       context,
-                      MaterialPageRoute(builder: (context) => const HomeScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
                     );
                   } else {
                     // Show error if sign-up fails
-                    // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Failed to sign up')),
                     );
@@ -161,7 +168,8 @@ class _SignupPageState extends State<SignupPage> {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                 ),
-                child: const Text('Sign Up', style: TextStyle(color: Colors.white)),
+                child: const Text('Sign Up',
+                    style: TextStyle(color: Colors.white)),
               ),
             ),
             const SizedBox(height: 20),
