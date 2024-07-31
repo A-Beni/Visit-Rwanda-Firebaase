@@ -1,13 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:visit_rwanda/auth_service.dart'; 
-import 'home_screen.dart'; 
+import 'package:visit_rwanda/auth_service.dart';
+import 'home_screen.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _SignupPageState createState() => _SignupPageState();
 }
 
@@ -139,16 +138,16 @@ class _SignupPageState extends State<SignupPage> {
                     return;
                   }
 
-                  User? user = await _auth.signInWithEmailAndPassword(email, password);
+                  // Use the register method instead of sign in
+                  User? user = await _auth.registerWithEmailAndPassword(email, password);
                   if (user != null) {
+                    // Navigate to HomeScreen if registration is successful
                     Navigator.push(
-                      // ignore: use_build_context_synchronously
                       context,
                       MaterialPageRoute(builder: (context) => const HomeScreen()),
                     );
                   } else {
                     // Show error if sign-up fails
-                    // ignore: use_build_context_synchronously
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Failed to sign up')),
                     );

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:visit_rwanda/login.dart';
 import 'package:visit_rwanda/signup.dart';
 
-void main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
