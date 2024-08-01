@@ -1,11 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:visit_rwanda/auth_service.dart';
 import 'package:visit_rwanda/login.dart';
-// ignore: unused_import
-import 'home_screen.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -24,6 +23,15 @@ class _SignupPageState extends State<SignupPage> {
       TextEditingController();
 
   bool _rememberMe = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +155,11 @@ class _SignupPageState extends State<SignupPage> {
                     );
                     return;
                   }
+                  addUserDetils(
+                    _usernameController.text.trim(),
+                    _emailController.text.trim(),
+                    _passwordController.text.trim(),
+                  );
 
                   // Use the register method instead of sign in
                   User? user =
@@ -219,4 +232,12 @@ class _SignupPageState extends State<SignupPage> {
       ),
     );
   }
+}
+
+Future addUserDetils(String username, String email, String password) async {
+  await FirebaseFirestore.instance.collection('users').add({
+    'user name': username,
+    'email': email,
+    'password': password,
+  });
 }
