@@ -1,7 +1,10 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:visit_rwanda/details.dart';
 import 'package:visit_rwanda/explore_page.dart';
 import 'package:visit_rwanda/trip_page.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,10 +16,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: '/', // Define the initial route
+      initialRoute: '/',
       routes: {
-        '/': (context) => const HomeScreen(), // HomeScreen route
-        '/explore': (context) => const ExplorePage(), // ExplorePage route
+        '/': (context) => const HomeScreen(),
+        '/explore': (context) => const ExplorePage(),
       },
     );
   }
@@ -26,7 +29,6 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -36,10 +38,11 @@ class _HomeScreenState extends State<HomeScreen> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomeContent(),
     ExplorePage(),
-    TripPage(), // Include ExplorePage directly in the list
+    TripPage(),
     Center(
-        child: Text('Profile Page',
-            style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold))),
+      child: Text('Profile Page',
+          style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+    ),
   ];
 
   void _onItemTapped(int index) {
@@ -99,8 +102,51 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeContent extends StatelessWidget {
+class HomeContent extends StatefulWidget {
   const HomeContent({super.key});
+
+  @override
+  _HomeContentState createState() => _HomeContentState();
+}
+
+class _HomeContentState extends State<HomeContent> {
+  String imageUrl = '';
+  String imageUrl1 = '';
+  String imageUrl2 = '';
+  String imageUrl3 = '';
+  String imageUrl4 = '';
+  String imageUrl5 = '';
+
+  final storage = FirebaseStorage.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    getImageUrl();
+  }
+
+  Future<void> getImageUrl() async {
+    final ref = storage.ref().child('cabin.jpeg');
+    final ref1 = storage.ref().child('mountain.jpeg');
+    final ref2 = storage.ref().child('cabin.jpeg');
+    final ref3 = storage.ref().child('le-marara.jpeg');
+    final ref4 = storage.ref().child('cleo.jpeg');
+    final ref5 = storage.ref().child('le-marara.jpeg');
+    final url = await ref.getDownloadURL();
+    final url1 = await ref1.getDownloadURL();
+    final url2 = await ref2.getDownloadURL();
+    final url3 = await ref3.getDownloadURL();
+    final url4 = await ref4.getDownloadURL();
+    final url5 = await ref5.getDownloadURL();
+    setState(() {
+      imageUrl = url;
+      imageUrl1 = url1;
+      imageUrl2 = url2;
+      imageUrl3 = url3;
+      imageUrl4 = url4;
+      imageUrl5 = url5;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,36 +176,45 @@ class HomeContent extends StatelessWidget {
                 TextStyle(fontSize: 16, color: Color.fromARGB(255, 15, 15, 15)),
           ),
           const SizedBox(height: 10),
-          const SingleChildScrollView(
+          SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                DestinationCard(
-                  title: 'Cabin',
-                  weeks: '3 weeks',
-                  discount: '10%',
-                  description:
-                      'Explore GOA with amazing discounts, book your adventure today!',
-                  imageUrl: 'assets/images/cabin.jpeg',
-                ),
-                SizedBox(height: 10, width: 10),
-                DestinationCard(
-                  title: 'Mountain Sabyinyo',
-                  weeks: '6 weeks',
-                  discount: '25%',
-                  description:
-                      'Explore Andaman and Nicobar islands with amazing discounts, book your adventure today!',
-                  imageUrl: 'assets/images/mountain.jpeg',
-                ),
-                SizedBox(height: 10, width: 10),
-                DestinationCard(
-                  title: 'Cabin',
-                  weeks: '3 weeks',
-                  discount: '10%',
-                  description:
-                      'Explore GOA with amazing discounts, book your adventure today!',
-                  imageUrl: 'assets/images/cabin.jpeg',
-                ),
+                if (imageUrl.isNotEmpty)
+                  DestinationCard(
+                    title: 'Cabin',
+                    weeks: '3 weeks',
+                    discount: '10%',
+                    description:
+                        'Explore GOA with amazing discounts, book your adventure today!',
+                    imageUrl: imageUrl,
+                  )
+                else
+                  const CircularProgressIndicator(),
+                const SizedBox(height: 10, width: 10),
+                if (imageUrl1.isNotEmpty)
+                  DestinationCard(
+                    title: 'Mountain Sabyinyo',
+                    weeks: '6 weeks',
+                    discount: '25%',
+                    description:
+                        'Explore Andaman and Nicobar islands with amazing discounts, book your adventure today!',
+                    imageUrl: imageUrl1,
+                  )
+                else
+                  const CircularProgressIndicator(),
+                const SizedBox(height: 10, width: 10),
+                if (imageUrl2.isNotEmpty)
+                  DestinationCard(
+                    title: 'Cabin',
+                    weeks: '3 weeks',
+                    discount: '10%',
+                    description:
+                        'Explore GOA with amazing discounts, book your adventure today!',
+                    imageUrl: imageUrl2,
+                  )
+                else
+                  const CircularProgressIndicator(),
               ],
             ),
           ),
@@ -183,36 +238,45 @@ class HomeContent extends StatelessWidget {
                 TextStyle(fontSize: 16, color: Color.fromARGB(255, 27, 26, 26)),
           ),
           const SizedBox(height: 10),
-          const SingleChildScrollView(
+          SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                DestinationCard(
-                  title: 'Le Marara',
-                  weeks: '3 weeks',
-                  discount: '5%',
-                  description:
-                      'Explore the beauty of Le Marara, book your adventure today!',
-                  imageUrl: 'assets/images/le-marara.jpeg',
-                ),
-                SizedBox(height: 10, width: 10),
-                DestinationCard(
-                  title: 'Cleo Hotel',
-                  weeks: '4 weeks',
-                  discount: '15%',
-                  description:
-                      'Enjoy a luxurious stay at Cleo Hotel, book your adventure today!',
-                  imageUrl: 'assets/images/cleo.jpeg',
-                ),
-                SizedBox(height: 10, width: 10),
-                DestinationCard(
-                  title: 'Le Marara',
-                  weeks: '3 weeks',
-                  discount: '5%',
-                  description:
-                      'Explore the beauty of Le Marara, book your adventure today!',
-                  imageUrl: 'assets/images/le-marara.jpeg',
-                ),
+                if (imageUrl3.isNotEmpty)
+                  DestinationCard(
+                    title: 'Le Marara',
+                    weeks: '3 weeks',
+                    discount: '5%',
+                    description:
+                        'Explore the beauty of Le Marara, book your adventure today!',
+                    imageUrl: imageUrl3,
+                  )
+                else
+                  const CircularProgressIndicator(),
+                const SizedBox(height: 10, width: 10),
+                if (imageUrl4.isNotEmpty)
+                  DestinationCard(
+                    title: 'Cleo Hotel',
+                    weeks: '4 weeks',
+                    discount: '15%',
+                    description:
+                        'Enjoy a luxurious stay at Cleo Hotel, book your adventure today!',
+                    imageUrl: imageUrl4,
+                  )
+                else
+                  const CircularProgressIndicator(),
+                const SizedBox(height: 10, width: 10),
+                if (imageUrl5.isNotEmpty)
+                  DestinationCard(
+                    title: 'Le Marara',
+                    weeks: '3 weeks',
+                    discount: '5%',
+                    description:
+                        'Explore the beauty of Le Marara, book your adventure today!',
+                    imageUrl: imageUrl5,
+                  )
+                else
+                  const CircularProgressIndicator(),
               ],
             ),
           ),
@@ -277,12 +341,12 @@ class DestinationCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: 150,
-        height: 150,
+        width: 200, // Adjusted width to fit better on screen
+        height: 200, // Adjusted height to fit better on screen
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.0),
           image: DecorationImage(
-            image: AssetImage(imageUrl),
+            image: NetworkImage(imageUrl),
             fit: BoxFit.cover,
           ),
         ),
