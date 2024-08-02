@@ -1,4 +1,7 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,131 +18,232 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class ExplorePage extends StatelessWidget {
+class ExplorePage extends StatefulWidget {
   const ExplorePage({super.key});
+
+  @override
+  _ExplorePageState createState() => _ExplorePageState();
+}
+
+class _ExplorePageState extends State<ExplorePage> {
+  final storage = FirebaseStorage.instance;
+  List<Map<String, String>> cities = [];
+  List<Map<String, String>> adventures = [];
+  bool isLoading = true; // Add a loading state variable
+
+  @override
+  void initState() {
+    super.initState();
+    fetchCityImages();
+    fetchAdventureImages();
+  }
+
+  // Fetch city images
+  Future<void> fetchCityImages() async {
+    final List<Map<String, String>> cityDetails = [
+      {'name': 'Kigali', 'path': 'kigali.jpeg'},
+      {'name': 'Musanze', 'path': 'musanze.jpeg'},
+      {'name': 'Rubavu', 'path': 'rubavu.jpeg'},
+      {'name': 'Kibeho', 'path': 'kibeho.jpeg'},
+      {'name': 'Muhanga', 'path': 'muhanga.jpeg'},
+      {'name': 'Rwesero', 'path': 'rwesero.jpeg'},
+      {'name': 'Kamembe', 'path': 'kamembe.jpg'},
+      {'name': 'Vision City', 'path': 'vision_city.jpg'},
+    ];
+
+    try {
+      // Fetch city images asynchronously
+      final fetchedCities = await Future.wait(cityDetails.map((city) async {
+        final url = await storage.ref().child(city['path']!).getDownloadURL();
+        return {'name': city['name']!, 'image': url};
+      }));
+
+      // Update state with fetched data
+      if (mounted) {
+        setState(() {
+          cities = fetchedCities;
+        });
+
+        // Check if all data has been fetched
+        checkIfAllDataFetched();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isLoading = false; // Set loading to false on error
+        });
+      }
+    }
+  }
+
+  // Fetch adventure images
+  Future<void> fetchAdventureImages() async {
+    final List<Map<String, String>> adventureDetails = [
+      {
+        'title': 'Hiking',
+        'path': 'hiking.jpeg',
+        'discount': '20%',
+        'duration': '4 weeks'
+      },
+      {
+        'title': 'Backpack',
+        'path': 'backpack.jpg',
+        'discount': '30%',
+        'duration': '3 Months'
+      },
+      {
+        'title': 'Hot Air Balloon',
+        'path': 'hot-airballon.jpeg',
+        'discount': '8%',
+        'duration': '2 weeks'
+      },
+      {
+        'title': 'Kayaking',
+        'path': 'kayaking.jpeg',
+        'discount': '5%',
+        'duration': '1 week'
+      },
+    ];
+
+    try {
+      // Fetch adventure images asynchronously
+      final fetchedAdventures =
+          await Future.wait(adventureDetails.map((adventure) async {
+        final url =
+            await storage.ref().child(adventure['path']!).getDownloadURL();
+        return {
+          'title': adventure['title']!,
+          'image': url,
+          'discount': adventure['discount']!,
+          'duration': adventure['duration']!,
+        };
+      }));
+
+      // Update state with fetched data
+      if (mounted) {
+        setState(() {
+          adventures = fetchedAdventures;
+        });
+
+        // Check if all data has been fetched
+        checkIfAllDataFetched();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          isLoading = false; // Set loading to false on error
+        });
+      }
+    }
+  }
+
+  // Check if all data has been fetched
+  void checkIfAllDataFetched() {
+    if (cities.isNotEmpty && adventures.isNotEmpty) {
+      setState(() {
+        isLoading = false; // Data has been fetched, stop loading
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SearchBar(),
-              const SizedBox(height: 20),
-              const Text(
-                'Explore Cities',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Text(
-                'Explore different citys in your budget',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 100,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: const [
-                    CityCard(
-                        image: 'assets/images/kigali.jpeg', name: 'Kigali'),
-                    CityCard(
-                        image: 'assets/images/musanze.jpeg', name: 'Musanze'),
-                    CityCard(
-                        image: 'assets/images/rubavu.jpeg', name: 'Rubavu'),
-                    CityCard(
-                        image: 'assets/images/kibeho.jpeg', name: 'Kibeho'),
-                    CityCard(
-                        image: 'assets/images/muhanga.jpeg', name: 'Muhanga'),
-                    CityCard(
-                        image: 'assets/images/rwesero.jpeg', name: 'Rwesero'),
-                    CityCard(
-                        image: 'assets/images/kamembe.jpg', name: 'Kamembe'),
-                    CityCard(
-                        image: 'assets/images/vision_city.jpg',
-                        name: 'Vision City'),
-                    CityCard(
-                        image: 'assets/images/rubavu.jpeg', name: 'Rubavu'),
-                    CityCard(
-                        image: 'assets/images/kibeho.jpeg', name: 'Kibeho'),
-                    CityCard(
-                        image: 'assets/images/muhanga.jpeg', name: 'Muhanga'),
+      body: isLoading
+          ? const Center(
+              child:
+                  CircularProgressIndicator(), // Display CircularProgressIndicator when loading
+            )
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SearchBar(),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Explore Cities',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Text(
+                      'Explore different cities in your budget',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      height: 100,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: cities.length,
+                        itemBuilder: (context, index) {
+                          final city = cities[index];
+                          return CityCard(
+                            image: city['image']!,
+                            name: city['name']!,
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Adventure',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'See all',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Text(
+                      'Different adventure trips!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.7,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: adventures.length,
+                      itemBuilder: (context, index) {
+                        final adventure = adventures[index];
+                        return AdventureCard(
+                          discount: adventure['discount']!,
+                          image: adventure['image']!,
+                          title: adventure['title']!,
+                          duration: adventure['duration']!,
+                        );
+                      },
+                    ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Adventure',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    'See all',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.blue,
-                    ),
-                  ),
-                ],
-              ),
-              const Text(
-                'Different adventure trips!',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-              const SizedBox(height: 10),
-              GridView.count(
-                shrinkWrap: true,
-                crossAxisCount: 2,
-                childAspectRatio: 0.7,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-                children: const [
-                  AdventureCard(
-                    discount: '20%',
-                    image: 'assets/images/hiking.jpeg',
-                    title: 'Hiking',
-                    duration: '4 weeks',
-                  ),
-                  AdventureCard(
-                    discount: '30%',
-                    image: 'assets/images/backpack.jpg',
-                    title: 'Backpack',
-                    duration: '3 Months',
-                  ),
-                  AdventureCard(
-                    discount: '8%',
-                    image: 'assets/images/hot-airballon.jpeg',
-                    title: 'Hot Air Balloon',
-                    duration: '2 weeks',
-                  ),
-                  AdventureCard(
-                    discount: '5%',
-                    image: 'assets/images/kayaking.jpeg',
-                    title: 'Kayaking',
-                    duration: '1 week',
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
@@ -161,7 +265,7 @@ class CityCard extends StatelessWidget {
       child: Column(
         children: [
           ClipOval(
-            child: Image.asset(
+            child: Image.network(
               image,
               height: 60,
               width: 60,
@@ -218,7 +322,7 @@ class AdventureCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
+                child: Image.network(
                   image,
                   height: 150,
                   width: double.infinity,

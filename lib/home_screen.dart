@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:visit_rwanda/details.dart';
 import 'package:visit_rwanda/explore_page.dart';
+import 'package:visit_rwanda/profile_page.dart';
 import 'package:visit_rwanda/trip_page.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -39,10 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     HomeContent(),
     ExplorePage(),
     TripPage(),
-    Center(
-      child: Text('Profile Page',
-          style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-    ),
+    ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -116,6 +114,7 @@ class _HomeContentState extends State<HomeContent> {
   String imageUrl3 = '';
   String imageUrl4 = '';
   String imageUrl5 = '';
+  bool _isLoading = true;
 
   final storage = FirebaseStorage.instance;
 
@@ -126,30 +125,46 @@ class _HomeContentState extends State<HomeContent> {
   }
 
   Future<void> getImageUrl() async {
-    final ref = storage.ref().child('cabin.jpeg');
-    final ref1 = storage.ref().child('mountain.jpeg');
-    final ref2 = storage.ref().child('cabin.jpeg');
-    final ref3 = storage.ref().child('le-marara.jpeg');
-    final ref4 = storage.ref().child('cleo.jpeg');
-    final ref5 = storage.ref().child('le-marara.jpeg');
-    final url = await ref.getDownloadURL();
-    final url1 = await ref1.getDownloadURL();
-    final url2 = await ref2.getDownloadURL();
-    final url3 = await ref3.getDownloadURL();
-    final url4 = await ref4.getDownloadURL();
-    final url5 = await ref5.getDownloadURL();
-    setState(() {
-      imageUrl = url;
-      imageUrl1 = url1;
-      imageUrl2 = url2;
-      imageUrl3 = url3;
-      imageUrl4 = url4;
-      imageUrl5 = url5;
-    });
+    try {
+      final ref = storage.ref().child('cabin.jpeg');
+      final ref1 = storage.ref().child('mountain.jpeg');
+      final ref2 = storage.ref().child('cabin.jpeg');
+      final ref3 = storage.ref().child('le-marara.jpeg');
+      final ref4 = storage.ref().child('cleo.jpeg');
+      final ref5 = storage.ref().child('le-marara.jpeg');
+      final url = await ref.getDownloadURL();
+      final url1 = await ref1.getDownloadURL();
+      final url2 = await ref2.getDownloadURL();
+      final url3 = await ref3.getDownloadURL();
+      final url4 = await ref4.getDownloadURL();
+      final url5 = await ref5.getDownloadURL();
+      if (mounted) {
+        setState(() {
+          imageUrl = url;
+          imageUrl1 = url1;
+          imageUrl2 = url2;
+          imageUrl3 = url3;
+          imageUrl4 = url4;
+          imageUrl5 = url5;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      // Handle errors if any
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
       child: Column(
@@ -188,9 +203,7 @@ class _HomeContentState extends State<HomeContent> {
                     description:
                         'Explore GOA with amazing discounts, book your adventure today!',
                     imageUrl: imageUrl,
-                  )
-                else
-                  const CircularProgressIndicator(),
+                  ),
                 const SizedBox(height: 10, width: 10),
                 if (imageUrl1.isNotEmpty)
                   DestinationCard(
@@ -200,9 +213,7 @@ class _HomeContentState extends State<HomeContent> {
                     description:
                         'Explore Andaman and Nicobar islands with amazing discounts, book your adventure today!',
                     imageUrl: imageUrl1,
-                  )
-                else
-                  const CircularProgressIndicator(),
+                  ),
                 const SizedBox(height: 10, width: 10),
                 if (imageUrl2.isNotEmpty)
                   DestinationCard(
@@ -212,9 +223,7 @@ class _HomeContentState extends State<HomeContent> {
                     description:
                         'Explore GOA with amazing discounts, book your adventure today!',
                     imageUrl: imageUrl2,
-                  )
-                else
-                  const CircularProgressIndicator(),
+                  ),
               ],
             ),
           ),
@@ -250,9 +259,7 @@ class _HomeContentState extends State<HomeContent> {
                     description:
                         'Explore the beauty of Le Marara, book your adventure today!',
                     imageUrl: imageUrl3,
-                  )
-                else
-                  const CircularProgressIndicator(),
+                  ),
                 const SizedBox(height: 10, width: 10),
                 if (imageUrl4.isNotEmpty)
                   DestinationCard(
@@ -262,9 +269,7 @@ class _HomeContentState extends State<HomeContent> {
                     description:
                         'Enjoy a luxurious stay at Cleo Hotel, book your adventure today!',
                     imageUrl: imageUrl4,
-                  )
-                else
-                  const CircularProgressIndicator(),
+                  ),
                 const SizedBox(height: 10, width: 10),
                 if (imageUrl5.isNotEmpty)
                   DestinationCard(
@@ -274,9 +279,7 @@ class _HomeContentState extends State<HomeContent> {
                     description:
                         'Explore the beauty of Le Marara, book your adventure today!',
                     imageUrl: imageUrl5,
-                  )
-                else
-                  const CircularProgressIndicator(),
+                  ),
               ],
             ),
           ),
