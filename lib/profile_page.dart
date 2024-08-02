@@ -35,14 +35,14 @@ class ProfilePage extends StatelessWidget {
               const SizedBox(height: 20),
               const Center(
                 child: Text(
-                  'John Doe',
+                  'Bashyitsi Ngoga Jubril',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 10),
               const Center(
                 child: Text(
-                  'john.doe@example.com',
+                  'ALU@example.com',
                   style: TextStyle(fontSize: 16, color: Colors.grey),
                 ),
               ),
